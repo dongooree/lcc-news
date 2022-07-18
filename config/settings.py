@@ -71,7 +71,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'newstoday.wsgi.application'
+WSGI_APPLICATION = 'config.wsgi.application'
 
 
 # Database
