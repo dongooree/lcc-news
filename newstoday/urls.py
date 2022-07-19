@@ -19,7 +19,8 @@ from .views import * # 루트 디렉토리의 views에서 모든 함수를 가�
 # djangoMaster>views.py에서 모든 함수를 가져온다.
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    # path('admin/', admin.site.urls),
     path('', main), # views.py의 main함수를 의미한다.
+    path('crawling_today_cs/', crawling_today_cs, name="cs"),
 ]
 

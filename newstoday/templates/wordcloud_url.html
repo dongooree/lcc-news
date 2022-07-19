@@ -1,0 +1,82 @@
+<header>
+    <script src="https://cdn.anychart.com/releases/v8/js/anychart-base.min.js"></script>
+    <script src="https://cdn.anychart.com/releases/v8/js/anychart-tag-cloud.min.js"></script>
+    <script>
+        anychart.onDocumentReady(function () {        
+            // keyword dict mapping
+            var today = new Date();
+            today = today.toLocaleDateString();
+            var dicObject = {{ dict|safe }};
+            var srcObject = {{ source_dict|safe }};  
+            var newsCount = {{ news_count }};  
+            var testData = [];
+            document.getElementById("date").innerHTML = today + " 오늘의 뉴스 " + newsCount + "건";
+            // 오늘자 뉴스가 0개라면
+            if (newsCount == 0) {
+                document.getElementById("selectedTag").innerHTML = "게시된 오늘자 뉴스가 없습니다.";
+            }
+
+            for (var key in dicObject) {
+                // k = (dicObject[key])[0]
+                testData.push({
+                    "x": key,
+                    "value": (dicObject[key]),
+                    source: srcObject[key]        
+                });
+            }
+            
+            // console.log(testData);
+            // var chart = anychart.tagCloud(data);
+            var chart = anychart.tagCloud(testData);
+            chart.angles([0]);
+            chart.container("container");
+            // chart.getCredits().setEnabled(false);
+            // set the mode of the tag cloud
+            chart.mode("spiral");
+            chart.draw();
+
+            // add an event listener
+            chart.listen("pointClick", function(e){
+                // var url = "//en.wiktionary.org/wiki/" + e.point.get("x");
+                // window.open(url, "_blank");
+                document.getElementById("selectedTag").innerHTML = 'Selected Word: ';
+                document.getElementById("selectedTagSource").innerHTML = 'Sources:<br>';
+                var selectedTag = e.point.get("x");
+                var selectedTagSource = e.point.get("source");
+                document.getElementById("selectedTag").innerHTML += selectedTag;
+                // console.log(dicObject);
+                console.log("type of selectedTagSource: " + typeof(selectedTagSource));
+                selectedTagSource.forEach(function (item, index, array) {
+                    var val = Object.values(item);
+                    var key = Object.keys(item)
+                    // console.log(key, val);
+                    document.getElementById("selectedTagSource").innerHTML += '#' + (index + 1) + ' <a href="' + val + '" target="_blank" rel="noopener noreferrer">' + key + '<a><br>';
+                })                
+            });
+        });
+    </script>
+
+</header>
+<body>
+    <a href="{% url 'main' %}">HOME</a>
+    <h2>Interactive Word Cloud - IT</h2>
+    <h3>{{ press_name }}</h3>
+    <h3 id="date"></h3>
+    <hr>
+    <div style="margin-left: 2rem;">
+        <h3 id="selectedTag"></h3>
+        <h3 id="selectedTagSource"></h3>
+    </div>
+    
+    <div class="chart-area">
+        <div id="container" style="width:80%; height:80%;"></div>
+    </div>
+    
+    <!-- <hr> -->
+    <!-- {{ data }}
+
+    {% for item in data %}
+        <h3>{{ item.id }} / {{ item.name }}</h3>
+    {% endfor %} -->
+    
+</body>
